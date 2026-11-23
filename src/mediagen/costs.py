@@ -73,6 +73,33 @@ def breakeven_assets(
     return max(1, math.ceil(fixed_usd / (api_price_per_asset - marginal_usd)))
 
 
+def projected_run_seconds(
+    metrics: dict[str, Any],
+    n_assets: int,
+    startup_s: float | None = None,
+    steps: Sequence[str] | None = None,
+) -> float:
+    """How many seconds a run of ``n_assets`` assets takes.
+
+    Startup plus every model load, plus the median time of each asset in each
+    step. This is the number a price has to be multiplied by to get the cost of
+    a run.
+    """
+    available = metrics.get("steps") or {}
+    chosen = list(steps) if steps else list(available)
+    startup = float(
+        startup_s if startup_s is not None else metrics.get("startup_s") or 0.0
+    )
+    total = startup
+    for name in chosen:
+        step = available.get(name)
+        if not step:
+            continue
+        total += float(step.get("load_s") or 0.0)
+        total += n_assets * step_median_seconds(step)
+    return total
+
+
 def step_median_seconds(step: dict[str, Any]) -> float:
     """The median time of one step, in seconds.
 

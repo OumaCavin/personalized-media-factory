@@ -20,7 +20,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from mediagen import costs, metrics as metrics_mod, records
+from mediagen import costs, metrics as metrics_mod, records, spotprice
 from mediagen.specs import H100, IMAGE_SETTINGS, SANA, VIDEO_SETTINGS, WAN_I2V
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -323,6 +323,90 @@ def cmd_compare(args: argparse.Namespace) -> int:
 
 
 # --------------------------------------------------------------------------
+# spot-price
+# --------------------------------------------------------------------------
+def cmd_spot_price(args: argparse.Namespace) -> int:
+    """Read the live spot prices and, optionally, cost a run at them."""
+    try:
+        prices = spotprice.fetch_spot_prices()
+    except Exception as exc:
+        print(f"could not read the spot price API: {exc!r}", file=sys.stderr)
+        return 1
+
+    if not prices:
+        print("the spot price API returned no prices", file=sys.stderr)
+        return 1
+
+    print(f"read at {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC")
+    print(f"source: {spotprice.SPOT_PRICE_URL}\n")
+
+    if args.platform:
+        shown = [price for price in prices if price.platform == args.platform]
+        if args.region:
+            shown = [price for price in shown if price.region == args.region]
+    else:
+        shown = prices
+
+    if not shown:
+        print(f"no spot price published for {args.platform} "
+              f"in {args.region or 'any region'} right now.")
+        print("That usually means there is no preemptible capacity for that")
+        print("platform in that region at the moment. Check the Nebius console")
+        print("Capacity dashboard before you start a run.")
+        return 0
+
+    print("| Platform | Region | Spot price per hour | Effective at |")
+    print("| --- | --- | ---: | --- |")
+    for price in shown:
+        print(
+            f"| {price.platform} | {price.region} | ${price.price_per_hour:.4f} | "
+            f"{price.effective_at} |"
+        )
+
+    if args.platform:
+        best = spotprice.find_price(prices, args.platform, args.region)
+        if best:
+            print(f"\ncheapest {args.platform}"
+                  f"{' in ' + best.region if best.region else ''}: "
+                  f"${best.price_per_hour:.4f} per GPU hour")
+        regions = spotprice.platform_regions(prices, args.platform)
+        if regions:
+            print(f"regions publishing a {args.platform} spot price right now: "
+                  f"{', '.join(regions)}")
+
+    if args.metrics:
+        document, provenance = metrics_mod.load_metrics(args.metrics)
+        price = None
+        if args.platform:
+            found = spotprice.find_price(prices, args.platform, args.region)
+            if found:
+                price = found.price_per_hour
+        if price is None:
+            print("\nno live price for the requested platform, so no projection")
+            return 0
+        startup = _resolve_startup(document, args)
+        seconds = costs.projected_run_seconds(document, args.n, startup_s=startup)
+        run_cost = seconds * price / 3600.0
+        analysis = costs.analyze_step(
+            document,
+            step=args.step,
+            price_per_hour=price,
+            api_price_per_asset=args.api_price,
+            startup_s=startup,
+        )
+        print(f"\nprojected from {args.metrics}")
+        print(f"  provenance              : {provenance.source}")
+        print(f"  run duration for {args.n} assets : {seconds:.0f} s")
+        print(f"  run cost at ${price:.4f}/h       : ${run_cost:.4f}")
+        print(f"  marginal cost c         : ${analysis.marginal_usd:.6f}")
+        print(f"  fixed cost F            : ${analysis.fixed_usd:.6f}")
+        breakeven = analysis.breakeven_assets
+        print(f"  breakeven N             : "
+              f"{breakeven if breakeven else 'never (0)'} assets per run")
+    return 0
+
+
+# --------------------------------------------------------------------------
 # annotate-startup
 # --------------------------------------------------------------------------
 def cmd_annotate_startup(args: argparse.Namespace) -> int:
@@ -457,6 +541,17 @@ def build_parser() -> argparse.ArgumentParser:
     compare.add_argument("--startup-file", default=str(DEFAULT_STARTUP))
     compare.add_argument("--n-values", type=int, action="append", default=None)
     compare.set_defaults(func=cmd_compare)
+
+    spot = sub.add_parser("spot-price", help="read the live preemptible prices")
+    spot.add_argument("--platform", default=None)
+    spot.add_argument("--region", default=None)
+    spot.add_argument("--metrics", default=None)
+    spot.add_argument("--step", default="clip")
+    spot.add_argument("--n", type=int, default=10)
+    spot.add_argument("--api-price", type=float, default=0.2025)
+    spot.add_argument("--startup-s", type=float, default=None)
+    spot.add_argument("--startup-file", default=str(DEFAULT_STARTUP))
+    spot.set_defaults(func=cmd_spot_price)
 
     annotate = sub.add_parser("annotate-startup", help="fill in the machine startup")
     annotate.add_argument("--metrics", required=True)
