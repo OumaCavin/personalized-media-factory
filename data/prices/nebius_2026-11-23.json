@@ -1,0 +1,80 @@
+{
+  "snapshot_id": "nebius-gpu-prices-2026-11-23",
+  "read_at": "2026-11-23",
+  "currency": "USD",
+  "billing_unit": "1 second",
+  "pricing_unit": "1 hour (3600 seconds)",
+  "note": "On demand prices are fixed. Preemptible prices for H100, H200, B200, B300 and RTX PRO 6000 are dynamic spot prices that can change every 15 minutes and are not capped above the on demand rate. L40S is excluded from dynamic spot pricing and is billed at a flat preemptible rate.",
+  "sources": [
+    {
+      "url": "https://docs.nebius.com/compute/resources/pricing",
+      "read_at": "2026-11-23",
+      "role": "primary",
+      "note": "Per platform table with GPU, CPU and RAM prices."
+    },
+    {
+      "url": "https://nebius.com/prices",
+      "read_at": "2026-11-23",
+      "role": "cross-check",
+      "note": "Marketing price list. Lists L40S as 'from $1.55' on demand and 'from $0.74' preemptible, which conflicts with the per platform table above ($1.35 and $0.65). The per platform table is used here because it names each platform and its CPU and RAM components; the marketing list quotes the cheapest configuration in a family and states no date."
+    },
+    {
+      "url": "https://api.nebius.cloud/billing/v1alpha1/spot-price",
+      "read_at": "2026-11-23",
+      "role": "live spot snapshot",
+      "note": "Public spot price API, no login required."
+    }
+  ],
+  "gpu_prices": [
+    {
+      "platform": "gpu-h100-sxm",
+      "gpu": "NVIDIA H100 NVLink",
+      "region": "eu-north1",
+      "on_demand_per_hour": 4.5,
+      "preemptible_per_hour": 0.79,
+      "preemptible_is_dynamic": true,
+      "preemptible_effective_at": "2026-11-23T04:11:00Z",
+      "note": "On demand is the fixed regular price. The preemptible figure is the live spot price for eu-north1 at the moment the snapshot was taken."
+    },
+    {
+      "platform": "gpu-h200-sxm",
+      "gpu": "NVIDIA H200 NVLink",
+      "region": "eu-north1",
+      "on_demand_per_hour": 5.4,
+      "preemptible_per_hour": 1.28,
+      "preemptible_is_dynamic": true,
+      "preemptible_effective_at": "2026-11-23T06:01:00Z"
+    },
+    {
+      "platform": "gpu-rtx6000-a",
+      "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "region": "uk-south2",
+      "on_demand_per_hour": 1.8,
+      "preemptible_per_hour": 1.38,
+      "preemptible_is_dynamic": true,
+      "preemptible_effective_at": "2026-11-22T01:46:00Z"
+    },
+    {
+      "platform": "gpu-l40s-a",
+      "gpu": "NVIDIA L40S",
+      "region": "eu-north1",
+      "on_demand_per_hour": 1.35,
+      "preemptible_per_hour": 0.65,
+      "preemptible_is_dynamic": false,
+      "note": "L40S preemptible is a flat rate, excluded from dynamic spot pricing. On the marketing price list the same platform appears as 'from $1.55' on demand and 'from $0.74' preemptible."
+    }
+  ],
+  "historical_snapshots": [
+    {
+      "id": "course-spot-snapshot-2026-11-14",
+      "read_at": "2026-11-14T15:05:00Z",
+      "source_url": "https://docs.nebius.com/signup-billing/spot-prices",
+      "prices": {
+        "gpu-h100-sxm": 2.07,
+        "gpu-h200-sxm": 2.48,
+        "gpu-rtx6000-a": 1.38
+      },
+      "note": "The spot snapshot the course used for its own published cost tables. Kept here so the published results can be reproduced exactly."
+    }
+  ]
+}

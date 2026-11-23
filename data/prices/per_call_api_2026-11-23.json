@@ -1,0 +1,107 @@
+{
+  "snapshot_id": "per-call-api-prices-2026-11-23",
+  "read_at": "2026-11-23",
+  "currency": "USD",
+  "note": "Per call APIs bill per output unit, not per GPU second: per image, per megapixel, or per video second. A self hosted run is compared against these on a per asset basis.",
+  "services": [
+    {
+      "service": "fal.ai",
+      "endpoint_id": "fal-ai/wan/v2.2-a14b/image-to-video",
+      "model": "Wan v2.2 A14B (image to video)",
+      "unit": "video second",
+      "frames_per_video_second": 16,
+      "rates": [
+        { "resolution": "480p", "price_per_video_second": 0.04 },
+        { "resolution": "580p", "price_per_video_second": 0.06 },
+        { "resolution": "720p", "price_per_video_second": 0.08 }
+      ],
+      "source_url": "https://fal.ai/models/fal-ai/wan/v2.2-a14b/image-to-video",
+      "read_at": "2026-11-23",
+      "is_primary_comparison": true,
+      "note": "Same model as the self hosted run, so the comparison is a model comparison and not a quality comparison."
+    },
+    {
+      "service": "fal.ai",
+      "endpoint_id": "fal-ai/sana",
+      "model": "Sana (text to image)",
+      "unit": "megapixel",
+      "price_per_megapixel": 0.001,
+      "source_url": "https://fal.ai/models/fal-ai/sana",
+      "read_at": "2026-11-23",
+      "is_primary_comparison": false,
+      "note": "Per call price for the illustration stage. The endpoint page does not state the checkpoint version or a minimum megapixel charge."
+    },
+    {
+      "service": "fal.ai",
+      "endpoint_id": "fal-ai/z-image/turbo",
+      "model": "Z-Image-Turbo",
+      "unit": "megapixel",
+      "price_per_megapixel": 0.005,
+      "source_url": "https://fal.ai/pricing",
+      "read_at": "2026-11-23",
+      "is_primary_comparison": false,
+      "note": "Closest per call equivalent for a fast distilled text to image model."
+    },
+    {
+      "service": "fal.ai",
+      "endpoint_id": "fal-ai/flux/dev",
+      "model": "FLUX.1 [dev]",
+      "unit": "image",
+      "price_per_image": 0.025,
+      "source_url": "https://fal.ai/docs/platform-apis/v1/models/pricing",
+      "read_at": "2026-11-23",
+      "is_primary_comparison": false
+    },
+    {
+      "service": "fal.ai",
+      "endpoint_id": "fal-ai/flux/schnell",
+      "model": "FLUX.1 [schnell]",
+      "unit": "megapixel",
+      "price_per_megapixel": 0.003,
+      "source_url": "https://fal.ai/pricing",
+      "read_at": "2026-11-23",
+      "is_primary_comparison": false
+    },
+    {
+      "service": "Replicate",
+      "endpoint_id": "black-forest-labs/flux-dev",
+      "model": "FLUX.1 [dev]",
+      "unit": "image",
+      "price_per_image": 0.025,
+      "source_url": "https://replicate.com/pricing",
+      "read_at": "2026-11-23",
+      "is_primary_comparison": false
+    },
+    {
+      "service": "Replicate",
+      "endpoint_id": "black-forest-labs/flux-1.1-pro",
+      "model": "FLUX1.1 [pro]",
+      "unit": "image",
+      "price_per_image": 0.04,
+      "source_url": "https://replicate.com/pricing",
+      "read_at": "2026-11-23",
+      "is_primary_comparison": false
+    },
+    {
+      "service": "Replicate",
+      "endpoint_id": "black-forest-labs/flux-schnell",
+      "model": "FLUX.1 [schnell]",
+      "unit": "thousand images",
+      "price_per_thousand_images": 3.0,
+      "source_url": "https://replicate.com/pricing",
+      "read_at": "2026-11-23",
+      "is_primary_comparison": false
+    },
+    {
+      "service": "Replicate",
+      "endpoint_id": "wavespeedai/wan-2.1-i2v-480p",
+      "model": "Wan 2.1 14B image to video",
+      "unit": "video second",
+      "price_per_video_second": 0.09,
+      "source_url": "https://replicate.com/pricing",
+      "read_at": "2026-11-23",
+      "is_primary_comparison": false,
+      "note": "A different Wan generation on a different service. Shown to make the provider spread visible: the same model family costs more than twice the fal rate for the 480p tier."
+    }
+  ]
+}
