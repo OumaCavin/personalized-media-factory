@@ -10,6 +10,13 @@ This is the Module 1 deliverable for **Production AI Agents for Generative
 Media** (DataTalks.Club and Nebius). It is built to grow: Module 2 adds an
 agent loop, Module 3 adds batch scale, Module 4 adds evaluation and tracing.
 
+Picking this up for the first time? Start with the
+[Module 1 walkthrough](docs/module-1-walkthrough.md). It turns the course's
+Module 1 README, its Setup section and the capstone proposal template into the
+concrete steps for this repository, and it covers the two things the course
+team added by email on 23 November 2026: redeeming the Nebius credits, and
+running Homework 1 on your own GPU instead of on Nebius.
+
 ---
 
 ## The idea
@@ -43,6 +50,13 @@ published reference run, projected at the published prices.
 | Per call API compared | **fal.ai**, same model, **$0.2025** per 480p clip |
 | Self host breakeven | **15 assets per run** at the regular price, 5 at the spot snapshot |
 
+A spot price is a moving target: the H100 in eu-north1 was $0.79 per GPU hour
+at 04:11 UTC on 23 November 2026 and $2.37 at 20:57 UTC the same day, and the
+breakeven moved from 2 assets per run to 6 over that window with no change to
+the model, the code or the run. Quote the price of the region you actually
+used, and date it. `mediagen spot-price` reads the live price and prints what
+it does to this run.
+
 Cost of one asset as the batch grows:
 
 | Assets per run | 1 | 10 | 100 | 1,000 |
@@ -55,6 +69,7 @@ useful thing this repository teaches.
 
 Full derivation, sources and caveats: [docs/cost-model.md](docs/cost-model.md).
 Copy-paste answers for the homework form: [docs/module-1-homework.md](docs/module-1-homework.md).
+Step-by-step for the course's own instructions: [docs/module-1-walkthrough.md](docs/module-1-walkthrough.md).
 
 ## How it runs
 
@@ -88,15 +103,22 @@ src/mediagen/          the package
   worker.py             the GPU worker that runs inside the Job
   metrics.py            the metrics schema and the provenance rules
   costs.py              the fixed and marginal cost model
-  cli.py                plan, analyze, report, compare, annotate-startup, verify
+  spotprice.py          the live preemptible prices, read from the public API
+  cli.py                plan, analyze, report, compare, spot-price, verify
 data/
   origins.csv           the ten records
   reference_runs/       published course measurements, with provenance sidecars
   prices/               dated price snapshots for GPUs and per call APIs
+  house-rules.json      the rules 'mediagen verify' checks the repository against
 docker/                 the worker image
 scripts/                build the image, run the Job, re-derive the numbers
-tests/                  28 tests, including cross checks against published results
-docs/                   the homework answers, the cost model, the capstone proposal
+tests/                  34 tests, including cross checks against published results
+docs/
+  module-1-walkthrough.md   the course instructions as concrete steps
+  module-1-homework.md      the answers, with provenance
+  cost-model.md             the F/N + c derivation, sources and caveats
+  capstone-proposal.md      the Module 1 capstone proposal
+  learning-in-public.md     post drafts and the seven links to collect
 ```
 
 ## Running it
@@ -108,10 +130,13 @@ and they are the ones worth running first.
 # 1. See the ten records and the prompts they turn into. No GPU, no account.
 python -m mediagen plan
 
-# 2. Re-derive every number in docs/ from the data files.
+# 2. Read the live preemptible price for a platform and region.
+python -m mediagen spot-price --platform gpu-h100-sxm --region eu-north1
+
+# 3. Re-derive every number in docs/ from the data files.
 ./scripts/analyze.sh
 
-# 3. Check the repository against its own house rules.
+# 4. Check the repository against its own house rules.
 python -m mediagen verify
 ```
 
