@@ -26,6 +26,18 @@ the machine generated version of the same table.
 > change. `mediagen analyze` prints a warning while you are still on the
 > reference data, so the distinction cannot be lost by accident.
 
+> **If you ran Homework 1 on your own GPU**, that is accepted. The course team
+> asks you to say so, name the GPU, and estimate the cost using the rate for a
+> comparable GPU in Nebius AI Cloud. The field for how you ran it is still
+> being worked out, so follow the homework discussion for the current wording.
+> [module-1-walkthrough.md](module-1-walkthrough.md#running-on-your-own-gpu)
+> has the field-by-field version for a local run, including which number to
+> multiply by the comparable Nebius rate.
+
+Step by step for everything the course asks for in Module 1, including the
+credit redemption path and the region choice, is in
+[module-1-walkthrough.md](module-1-walkthrough.md).
+
 The engine was validated against the course's own published results before
 being used for anything else: it reproduces the published breakevens of 15
 clips on an H100, 12 on an H200 and 3 on an RTX PRO 6000, the published
@@ -127,11 +139,23 @@ The same calculation at other prices, because the answer moves with the price:
 | --- | ---: | ---: | ---: |
 | $4.50 regular (on demand) | $0.0958 | $1.5046 | **15** |
 | $2.07 spot snapshot, 2026-11-14 | $0.0441 | $0.6921 | **5** |
-| $0.79 live spot price, 2026-11-23 | $0.0168 | $0.2641 | **2** |
+| $0.79 spot price, 2026-11-23 04:11 UTC | $0.0168 | $0.2641 | **2** |
+| $2.37 spot price, 2026-11-23 20:57 UTC | $0.0505 | $0.7924 | **6** |
 
 The breakeven is decided by the fixed part, not by the marginal part, so it
 moves a long way when the price of the GPU moves and barely at all when the
 model gets faster.
+
+The last two rows are the same code, the same model and the same run, sixteen
+hours apart. The H100 spot price in eu-north1 went from $0.79 to $2.37 per
+GPU hour and the breakeven went from 2 assets per run to 6. Quote the price
+of the region you actually ran in, and date it. `mediagen spot-price` reads
+the live price and prints what it does to this run:
+
+```bash
+python -m mediagen spot-price --platform gpu-h100-sxm --region eu-north1 \
+  --metrics data/reference_runs/course_h100_20kids_2026-11-14.json --n 10
+```
 
 ---
 

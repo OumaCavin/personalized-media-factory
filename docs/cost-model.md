@@ -170,13 +170,54 @@ What a run actually cost is in Billing to Usage. The gaps are:
   what the run paid, and a spot price can rise above the regular price during
   a run unless a pricing policy caps it.
 
+## Region and price volatility
+
+Every price in this document is for a **platform in a region**, and a spot
+price is a moving target. Two facts make this more than a footnote.
+
+First, spot prices differ by region for the same GPU, and a platform only
+publishes a price when there is preemptible capacity for it. On 23 November
+2026 the H100 published a price only in eu-north1, the H200 published prices in
+eu-north1, eu-north2, eu-west1 and us-central1, and the L40S published none at
+all because its preemptible rate is flat rather than dynamic.
+
+Second, the same price moves within a day. The H100 in eu-north1 was $0.79
+per GPU hour at 04:11 UTC and $2.37 at 20:57 UTC on 23 November 2026. Nothing
+about the model, the code or the run changed, and yet:
+
+| H100 price in eu-north1 | `c` per asset | `F` per run | Breakeven N | Run cost, 10 assets |
+| --- | ---: | ---: | ---: | ---: |
+| $0.79 at 04:11 UTC | $0.0168 | $0.2641 | 2 | $0.45 |
+| $2.37 at 20:57 UTC | $0.0505 | $0.7924 | 6 | $1.37 |
+| $4.50 regular, fixed | $0.0958 | $1.5046 | 15 | $2.59 |
+
+The breakeven tripled inside sixteen hours. A single published breakeven is
+therefore a statement about a moment, and the honest way to quote one is with
+the price, the region and the date next to it. The course team asks for
+exactly that: use the rate for the Nebius GPU and region you used to project
+the cost per asset at 1,000 assets.
+
+Read the live price rather than a stored one:
+
+```bash
+python -m mediagen spot-price
+python -m mediagen spot-price --platform gpu-h100-sxm --region eu-north1 \
+  --metrics data/reference_runs/course_h100_20kids_2026-11-14.json --n 10
+```
+
+Two regions is also a reason the reference numbers are region-specific. The
+157.7 s startup and the 1,046 s weight download were measured in eu-north1,
+and the download speed to the region is inside both. Running the same Job in
+another region changes them.
+
 ## The prices, and where they come from
 
 | Source | Read | Used for |
 | --- | --- | --- |
 | [Compute pricing](https://docs.nebius.com/compute/resources/pricing) | 2026-11-23 | H100 $4.50, L40S $1.35 on demand; H100 spot from $0.79; L40S preemptible flat $0.65 |
 | [Nebius price list](https://nebius.com/prices) | 2026-11-23 | cross check |
-| [Spot price API](https://api.nebius.cloud/billing/v1alpha1/spot-price) | 2026-11-23 04:11 UTC | live H100 spot price, $0.79 |
+| [Spot price API](https://api.nebius.cloud/billing/v1alpha1/spot-price) | 2026-11-23, 04:11 UTC and 20:57 UTC | two live readings, one per region set, showing the movement |
+| [Nebius console](https://console.nebius.com/) | 2026-11-23 | cheapest preemptible price per GPU type with its region |
 | [fal.ai model page](https://fal.ai/models/fal-ai/wan/v2.2-a14b/image-to-video) | 2026-11-23 | $0.04 per video second at 480p |
 | [fal.ai pricing](https://fal.ai/pricing) | 2026-11-23 | $0.001 per megapixel for Sana, $0.005 for Z-Image-Turbo, $0.003 for FLUX.1 schnell |
 | [Replicate pricing](https://replicate.com/pricing) | 2026-11-23 | $0.025 for FLUX.1 dev, $0.04 for FLUX1.1 pro, $3.00 per 1,000 for schnell |
