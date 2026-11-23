@@ -40,12 +40,8 @@ DEFAULT_STARTUP = (
     / "course_startup_h100_2026-11-14.json"
 )
 
-#: The strings that must never appear anywhere in this repository.
-FORBIDDEN_STRINGS = (
-    "minimax",
-    "minimax agent",
-    "minimax agent <agent@minimax.com>",
-)
+#: The house rules this repository is checked against.
+RULES_FILE = REPO_ROOT / "data" / "house-rules.json"
 
 #: Ranges of characters that would mean the repository is not English only.
 CJK_RANGES = (
@@ -60,6 +56,17 @@ CJK_RANGES = (
 COMMIT_PATTERN = re.compile(
     r"^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9._/-]+\))?: .+"
 )
+
+
+def _load_rules() -> dict[str, Any]:
+    """The house rules, from a data file rather than from this module.
+
+    A checker that hardcodes the strings it forbids contains them itself, so
+    the rules live in ``data/house-rules.json`` and are read from there.
+    """
+    if not RULES_FILE.is_file():
+        raise SystemExit(f"house rules file is missing: {RULES_FILE}")
+    return _load_json(RULES_FILE)
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -340,20 +347,26 @@ def _git(*args: str) -> str:
 
 def cmd_verify(args: argparse.Namespace) -> int:
     problems: list[str] = []
+    rules = _load_rules()
 
     name = _git("config", "user.name")
     email = _git("config", "user.email")
-    if name != "OumaCavin":
-        problems.append(f"git user.name is {name!r}, expected 'OumaCavin'")
-    if email != "cavin.otieno012@gmail.com":
-        problems.append(f"git user.email is {email!r}, expected 'cavin.otieno012@gmail.com'")
+    if name != rules["git_user_name"]:
+        problems.append(
+            f"git user.name is {name!r}, expected {rules['git_user_name']!r}"
+        )
+    if email != rules["git_user_email"]:
+        problems.append(
+            f"git user.email is {email!r}, expected {rules['git_user_email']!r}"
+        )
     print(f"git user.name  : {name}")
     print(f"git user.email : {email}")
 
     subjects = [
         line for line in _git("log", "--format=%s").splitlines() if line.strip()
     ]
-    bad_subjects = [s for s in subjects if not COMMIT_PATTERN.match(s)]
+    pattern = re.compile(rules["commit_pattern"])
+    bad_subjects = [s for s in subjects if not pattern.match(s)]
     print(f"commits checked: {len(subjects)}")
     for subject in subjects:
         print(f"  {subject}")
@@ -364,17 +377,21 @@ def cmd_verify(args: argparse.Namespace) -> int:
         )
 
     tracked = _git("ls-files").splitlines()
+    exempt = {entry["path"]: entry.get("reason", "") for entry in rules.get("exempt_files", [])}
     for relative in tracked:
         path = REPO_ROOT / relative
         if not path.is_file():
+            continue
+        if relative in exempt:
+            print(f"exempt: {relative} ({exempt[relative]})")
             continue
         try:
             text = path.read_text(encoding="utf-8")
         except (UnicodeDecodeError, OSError):
             continue
         lowered = text.lower()
-        for forbidden in FORBIDDEN_STRINGS:
-            if forbidden in lowered:
+        for forbidden in rules["forbidden_strings"]:
+            if forbidden.lower() in lowered:
                 problems.append(f"{relative} contains the forbidden string {forbidden!r}")
         for char in text:
             code = ord(char)
