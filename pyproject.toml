@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mediagen"
+version = "0.1.0"
+description = "Living Origin Cards: a batch generative-media pipeline on serverless GPUs, with a reproducible cost model."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Cavin Otieno" }]
+dependencies = []
+
+[project.optional-dependencies]
+gpu = [
+  "diffusers==0.39.0",
+  "transformers==5.13.1",
+  "accelerate==1.14.0",
+  "sentencepiece==0.2.1",
+  "protobuf==6.33.0",
+  "ftfy==6.3.1",
+  "imageio==2.38.1",
+  "imageio-ffmpeg==0.8.1",
+  "pillow==12.2.0",
+]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+mediagen = "mediagen.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
