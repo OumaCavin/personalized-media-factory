@@ -1,0 +1,8 @@
+{
+  "source": "course-reference-run",
+  "measured_by": "DataTalks.Club course authors",
+  "measured_at": "2026-11-14",
+  "license": "MIT",
+  "url": "https://github.com/DataTalksClub/production-ai-agents-for-media-generation/blob/b417a3f5703b21b54514c85cfae9c749b57e08c5/01-consistent-media-generation-on-serverless-gpus/assets/example_runs/h100.json",
+  "note": "20 kid batch Job on one NVIDIA H100 80GB, gpu-h100-sxm, 1gpu-16vcpu-200gb, eu-north1, preemptible. Steps: text, illustration (Sana), card (Pillow), clip (Wan2.2-I2V-A14B), greeting (Kokoro-82M), mix (ffmpeg). The 157.7 s startup was measured on a separate H100 Job from created_at to started_at on the same date and is recorded in docs/cost-model.md."
+}

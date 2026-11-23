@@ -1,0 +1,8 @@
+{
+  "source": "course-reference-run",
+  "measured_by": "DataTalks.Club course authors",
+  "measured_at": "2026-11-16",
+  "license": "MIT",
+  "url": "https://github.com/DataTalksClub/production-ai-agents-for-media-generation/blob/b417a3f5703b21b54514c85cfae9c749b57e08c5/01-consistent-media-generation-on-serverless-gpus/assets/example_runs/lesson02/endpoint-h100-2026-11-16.json",
+  "note": "Sana behind a Nebius Serverless AI Endpoint on an NVIDIA H100, called one request at a time. Latency includes the network round trip."
+}

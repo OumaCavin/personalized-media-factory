@@ -1,0 +1,8 @@
+{
+  "source": "course-reference-run",
+  "measured_by": "DataTalks.Club course authors",
+  "measured_at": "2026-11-14",
+  "license": "MIT",
+  "url": "https://github.com/DataTalksClub/production-ai-agents-for-media-generation/blob/b417a3f5703b21b54514c85cfae9c749b57e08c5/01-consistent-media-generation-on-serverless-gpus/05-measuring-costs.md",
+  "note": "Machine startup measured from Job created_at to started_at on one H100 Job."
+}

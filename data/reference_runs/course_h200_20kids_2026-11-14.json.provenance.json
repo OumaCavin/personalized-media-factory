@@ -1,0 +1,8 @@
+{
+  "source": "course-reference-run",
+  "measured_by": "DataTalks.Club course authors",
+  "measured_at": "2026-11-14",
+  "license": "MIT",
+  "url": "https://github.com/DataTalksClub/production-ai-agents-for-media-generation/blob/b417a3f5703b21b54514c85cfae9c749b57e08c5/01-consistent-media-generation-on-serverless-gpus/assets/example_runs/h200.json",
+  "note": "Same worker and same 20 records as the H100 run, on one NVIDIA H200, preemptible."
+}

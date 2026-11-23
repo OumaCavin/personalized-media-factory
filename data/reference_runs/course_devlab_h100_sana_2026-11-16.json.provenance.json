@@ -1,0 +1,8 @@
+{
+  "source": "course-reference-run",
+  "measured_by": "DataTalks.Club course authors",
+  "measured_at": "2026-11-16",
+  "license": "MIT",
+  "url": "https://github.com/DataTalksClub/production-ai-agents-for-media-generation/blob/b417a3f5703b21b54514c85cfae9c749b57e08c5/01-consistent-media-generation-on-serverless-gpus/assets/example_runs/lesson02/devlab-h100-2026-11-16.json",
+  "note": "Sana in a JupyterLab DevLab on an NVIDIA H100. Three images at 512x512, 20 steps, seed 7. Peak GPU memory 10.935 GB."
+}

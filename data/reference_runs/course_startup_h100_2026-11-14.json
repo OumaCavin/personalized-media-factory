@@ -1,0 +1,12 @@
+{
+  "startup_s": 157.7,
+  "measured_at": "2026-11-14",
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "platform": "gpu-h100-sxm",
+  "preset": "1gpu-16vcpu-200gb",
+  "region": "eu-north1",
+  "method": "the difference between the Job's created_at and its started_at",
+  "license": "MIT",
+  "url": "https://github.com/DataTalksClub/production-ai-agents-for-media-generation/blob/b417a3f5703b21b54514c85cfae9c749b57e08c5/01-consistent-media-generation-on-serverless-gpus/05-measuring-costs.md",
+  "note": "The startup is the time between creating a Job and the container running. The worker cannot see it, because the worker is inside the container and the Job is outside it, so it is measured from the Job metadata and added to the run afterwards with 'mediagen annotate-startup'. One H100 Job was measured on 2026-11-14; the course uses this figure for every run in its own cost tables."
+}
