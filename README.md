@@ -68,7 +68,9 @@ optimisation target inverts between those two points, which is the single most
 useful thing this repository teaches.
 
 Full derivation, sources and caveats: [docs/cost-model.md](docs/cost-model.md).
-Copy-paste answers for the homework form: [docs/module-1-homework.md](docs/module-1-homework.md).
+Copy-paste answers for the homework form, with a table mapping every question
+of the course's homework instructions and of the submission form onto the
+place this repository answers it: [docs/module-1-homework.md](docs/module-1-homework.md).
 Step-by-step for the course's own instructions: [docs/module-1-walkthrough.md](docs/module-1-walkthrough.md).
 
 ## How it runs
@@ -112,10 +114,11 @@ data/
   house-rules.json      the rules 'mediagen verify' checks the repository against
 docker/                 the worker image
 scripts/                build the image, run the Job, re-derive the numbers
-tests/                  34 tests, including cross checks against published results
+tests/                  45 tests, including cross checks against published results
 docs/
   module-1-walkthrough.md   the course instructions as concrete steps
-  module-1-homework.md      the answers, with provenance
+  module-1-homework.md      the answers, with provenance, and the mapping
+                            from each question to where it is answered
   cost-model.md             the F/N + c derivation, sources and caveats
   capstone-proposal.md      the Module 1 capstone proposal
   learning-in-public.md     post drafts and the seven links to collect
