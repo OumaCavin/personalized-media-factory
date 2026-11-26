@@ -130,6 +130,14 @@ L40S = GpuPlatform(
 
 GPU_PLATFORMS = {gpu.platform: gpu for gpu in (H100, L40S)}
 
+#: The modality of the asset this pipeline produces. The illustration stage is
+#: an intermediate image: it is the first frame that the clip animates, and the
+#: clip is what gets delivered.
+ASSET_MODALITY = "Video (image to video)"
+
+#: The modality of the intermediate frame.
+INTERMEDIATE_MODALITY = "Image (text to image)"
+
 #: Disk size for the worker container. The Wan weights alone are about 126 GB,
 #: and a larger disk writes faster, so the download finishes sooner.
 CONTAINER_DISK_SIZE = "500Gi"
