@@ -215,6 +215,12 @@ never goes in the repository or in a chat.
 The launcher validates the request without creating anything first, which is
 worth the ten seconds it saves.
 
+The shape of the run is the shape the homework asks for: one startup, one load
+of the model that makes the asset, and ten generations of it, all in one Job.
+Sana is loaded once as well, because the clip is image-to-video and needs a
+generated first frame, so the extra load is for the intermediate illustration
+and never for the asset. Load once per model, never once per asset.
+
 ```bash
 export WORKER_IMAGE=<your docker hub user>/living-origin-cards:0.1.0
 export BUCKET=<your-bucket>
@@ -291,7 +297,11 @@ FAQ, and linking it will read as though it is.
 
 The eight answers themselves are in
 [module-1-homework.md](module-1-homework.md), with the numbers generated rather
-than typed.
+than typed, and a table there maps every question of the course's homework
+instructions and of the submission form onto the place this repository
+answers it. Read that table before you submit: the two question sets differ,
+and the modality and the N = 1000 projection are only in the instructions
+version.
 
 ## Running on your own GPU
 
