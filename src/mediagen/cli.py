@@ -21,7 +21,15 @@ from pathlib import Path
 from typing import Any
 
 from mediagen import costs, metrics as metrics_mod, records, spotprice
-from mediagen.specs import H100, IMAGE_SETTINGS, SANA, VIDEO_SETTINGS, WAN_I2V
+from mediagen.specs import (
+    ASSET_MODALITY,
+    H100,
+    IMAGE_SETTINGS,
+    INTERMEDIATE_MODALITY,
+    SANA,
+    VIDEO_SETTINGS,
+    WAN_I2V,
+)
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_RECORDS = REPO_ROOT / "data" / "origins.csv"
@@ -244,20 +252,36 @@ def cmd_report(args: argparse.Namespace) -> int:
         f"Provenance of the measurements: `{provenance.source}` "
         f"({provenance.measured_by}, {provenance.measured_at}).\n"
     )
+    print(
+        "The course homework instructions and the submission form ask for "
+        "different questions, so the table is keyed by the question text and "
+        "answers both. The creative idea, question 1 in both, is written out "
+        "in docs/module-1-homework.md.\n"
+    )
     print("| Question | Answer |")
     print("| --- | --- |")
+    print(f"| Which model | {WAN_I2V.repo_id} ({WAN_I2V.modality}), revision "
+          f"`{WAN_I2V.revision}`, fed by a Sana illustration "
+          f"(`{SANA.repo_id}`, revision `{SANA.revision}`). Both Apache-2.0 |")
+    print(f"| Which modality | {ASSET_MODALITY}. The intermediate frame is "
+          f"{INTERMEDIATE_MODALITY} |")
+    print("| How did you run it | Job. One Nebius Serverless AI Job: one "
+          "startup, one model load per model, ten generations |")
+    print(f"| Which GPU | {document.get('gpu')} ({document.get('platform')}, "
+          f"{document.get('region')}) |")
+    print(f"| Median generation time per asset | {clip.median_s:.1f} s for the "
+          f"clip. {pipeline_seconds:.1f} s for the whole card |")
+    print(f"| Projected cost per asset at N = 1000 | "
+          f"${clip.cost_by_n.get(1000, 0):.4f} for the clip, "
+          f"${pipeline_fixed / 1000 + pipeline_marginal:.4f} for the whole card |")
+    print(f"| Marginal compute cost per asset, c | ${clip.marginal_usd:.6f} |")
     print(
-        f"| 5. Median generation time per asset | "
-        f"{clip.median_s:.1f} s ({args.step[0]} stage) |"
-    )
-    print(f"| 6. Marginal compute cost per asset, c | {_fmt_usd(clip.marginal_usd)} |")
-    print(
-        f"| 7. Per call API compared | {service['service']}, "
-        f"{service['endpoint_id']}, {_fmt_usd(api_price)} per asset |"
+        f"| Per call API compared | {service['service']}, "
+        f"{service['endpoint_id']}, ${api_price:.6f} per asset |"
     )
     breakeven = clip.breakeven_assets
     print(
-        f"| 8. Self host breakeven N | "
+        f"| Self host breakeven N | "
         f"{breakeven if breakeven else 'never (0)'} assets per run |"
     )
     print()
@@ -265,7 +289,7 @@ def cmd_report(args: argparse.Namespace) -> int:
     print("| N assets per run | Cost per asset |")
     print("| ---: | ---: |")
     for n, value in sorted(clip.cost_by_n.items()):
-        print(f"| {n} | {_fmt_usd(value)} |")
+        print(f"| {n} | ${value:.6f} |")
     print()
     print(
         f"Full pipeline marginal cost per origin card: "
